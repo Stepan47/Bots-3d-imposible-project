@@ -1,67 +1,68 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Network;
 
 public class BaseScript : MonoBehaviour
 {
     public GameObject MyCube;
     private string[] NameBots = new string[300];
-    private Dictionary<string, int[]> BotsCommands = new Dictionary<string, int[]>(300);
+    private Dictionary<string, Net> BotsCommands = new Dictionary<string, Net>();
     private int index;
-    private int index_command = 0;
     void Start()
     {
-    	index = 0;
+        index = 0;
         
     }
     // Здесь идет проход по всем ботам и выполнение команд
     void Commands_start(){
         for (int i=0;i<index;i++){
-            float bot_command = BotsCommands[NameBots[i]][index_command];
+            float random = 0.8f;
+            
+            float[,] random_get = new float[2,2];
+            random_get[0,0] = random;
+            random_get[1,0] = random;
+            float[,] BotReturn = BotsCommands[NameBots[i]].Think(random_get);
             MyCube = GameObject.Find(NameBots[i]);
-            if (bot_command == 0f){
+            Debug.Log("thin result bot "+NameBots[i]+ " "+ BotReturn[0,0]);
+            float bot_command = BotReturn[0,0];
+            if (bot_command < 0.5f){
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y,MyCube.transform.position.z + 0.01f);
 
             }
-            if (bot_command  == 1f){
+            if (bot_command  > 0.5f){
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y,MyCube.transform.position.z - 0.01f);
 
             }
-            if (bot_command  == 2f){
-                MyCube.transform.position = new Vector3(MyCube.transform.position.x-0.01f,MyCube.transform.position.y,MyCube.transform.position.z);
+            // if (bot_command  == 2f){
+            //     MyCube.transform.position = new Vector3(MyCube.transform.position.x-0.01f,MyCube.transform.position.y,MyCube.transform.position.z);
 
-            }
-            if (bot_command  == 3f){
-                MyCube.transform.position = new Vector3(MyCube.transform.position.x+0.01f,MyCube.transform.position.y,MyCube.transform.position.z);
+            // }
+            // if (bot_command  == 3f){
+            //     MyCube.transform.position = new Vector3(MyCube.transform.position.x+0.01f,MyCube.transform.position.y,MyCube.transform.position.z);
 
-            }
-            else{
-                MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y+0.01f,MyCube.transform.position.z);
-            }
+            // }
+            // else{
+            //     MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y+0.01f,MyCube.transform.position.z);
+            // }
             
 
         }
-        if (index_command >= 1){
-            index_command = 0;
-        }
-        index_command++;
     }
     
     void Update() 
     {
-    	if (Input.GetKeyDown(KeyCode.N)){
-    		MyCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-    		MyCube.AddComponent<Rigidbody>();
-    		MyCube.transform.position = new Vector3(200f, 25f, 130f);
-    		MyCube.name = "Bot"+index.ToString();
-    		NameBots[index] = "Bot"+index.ToString();
-            int[] list = new int[2];
-            for (int i=0;i<list.GetLength(0);i++){
-                list[i] = Random.Range(0,4);
-            }
-            BotsCommands.Add("Bot"+index.ToString(),list);
-    		index++;
-    	}
+        if (Input.GetKeyDown(KeyCode.N)){
+            MyCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            MyCube.AddComponent<Rigidbody>();
+            MyCube.transform.position = new Vector3(124.94f, 60.39f, 181.72f);
+            MyCube.name = "Bot"+index.ToString();
+            NameBots[index] = "Bot"+index.ToString();
+            Net NetBot = new Net();
+            NetBot.CreateNet(2,10,2);
+            BotsCommands.Add("Bot"+index.ToString(),NetBot);
+            index++;
+        }
         Commands_start();
     }
 }
