@@ -7,11 +7,14 @@ using UnityEngine.UI;
 public class MenuControl : MonoBehaviour
 {
     public bool isFullScreen= true;
+    public GameObject menu;
     //public AudioMixer am;
     Resolution[] rsl;
     List<string> resolutions;
     public Dropdown dropdown;
-  
+    void Update(){
+        if(Input.GetKeyDown(KeyCode.Escape)){if(menu.activeSelf){menu.SetActive(false);}else{menu.SetActive(true);}}
+    }
     public void StartPressed()
     {
         //start

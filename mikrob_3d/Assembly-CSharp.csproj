@@ -55,12 +55,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\scripts\BaseScript1.cs" />
      <Compile Include="Assets\scripts\Menu\MenuControl.cs" />
      <Compile Include="Assets\scripts\scriptBots\BaseScript.cs" />
      <Compile Include="Assets\scripts\scriptBots\Network.cs" />
+     <Compile Include="Assets\scripts\scriptBots\plant.cs" />
      <Compile Include="Assets\scripts\scriptsViews\Cam.cs" />
      <Compile Include="Assets\scripts\scriptsViews\CameraMove.cs" />
+     <Compile Include="Assets\scripts\timeGame.cs" />
+     <None Include="Assets\Seamless Textures (Realistic)\Read Me.txt" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/sidor/Documents/mikrob_3d/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
  </Reference>
