@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Network;
+using System;
+using System.IO;
 
 public class BaseScript : MonoBehaviour
 {
@@ -9,7 +12,7 @@ public class BaseScript : MonoBehaviour
     private string[] NameBots = new string[300];
     private Dictionary<string, Net> BotsCommands = new Dictionary<string, Net>();
     private int index;
-    private string bot_command;//здесь записывается команда типа "ход" "есть" и.т.д...
+    private int ActivNeuron;//здесь записывается номер по счету какой нейрон активирован
     void Start()
     {
         index = 0;
@@ -26,34 +29,43 @@ public class BaseScript : MonoBehaviour
             float[,] Outputs = BotsCommands[NameBots[i]].Think(Inputs);//в функции think получаем ответ
                                                                          //от нейросети
             //Это проверка какой нейрон активен больше всех
-            //надо будет как-то сделать по лучше, но пока тест :)
-            if (Outputs[0,0]>Outputs[1,0]&&Outputs[0,0]>Outputs[2,0]&&Outputs[0,0] > Outputs[3,0]){
-                bot_command = "-z";
-            }
-            if (Outputs[1,0]>Outputs[0,0]&&Outputs[1,0]>Outputs[2,0]&&Outputs[1,0] > Outputs[3,0]){
-                bot_command = "+z";
-            }
-            if (Outputs[2,0]>Outputs[0,0]&&Outputs[2,0]>Outputs[1,0]&&Outputs[2,0] > Outputs[3,0]){
-                bot_command = "-x";
-            }
-            if (Outputs[3,0]>Outputs[0,0]&&Outputs[3,0]>Outputs[1,0]&&Outputs[3,0] > Outputs[2,0]){
-                bot_command = "+x";
+            ActivNeuron = 0;
+            for (int IAN=1;IAN<Outputs.GetLength(0);IAN++){//"IAN" переводится как "index activ neuron"
+                if (Outputs[IAN,0] > Outputs[IAN-1,0]){
+                    ActivNeuron = IAN;
+
+                }
             }
 
-            if (bot_command == "-z"){
+            if (ActivNeuron == 0){//если активирован нейрон под номером 0 то от z отнимается 0.03f
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y,MyCube.transform.position.z - 0.03f);
 
             }
-            if (bot_command == "+z"){
+            if (ActivNeuron == 1){//если активирован нейрон под номером 1 то к z прибовляется 0.03f
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x,MyCube.transform.position.y,MyCube.transform.position.z + 0.03f);
 
             }
-            if (bot_command == "-x"){
+            if (ActivNeuron == 2){//если активирован нейрон под номером 2 то от x отнимается 0.03f
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x-0.03f,MyCube.transform.position.y,MyCube.transform.position.z);
 
             }
-            if (bot_command == "+x"){
+            if (ActivNeuron == 3){//если активирован нейрон под номером 3 то к z прибовляется 0.03f
                 MyCube.transform.position = new Vector3(MyCube.transform.position.x+0.03f,MyCube.transform.position.y,MyCube.transform.position.z);
+
+            }
+            //работа с энергией
+            BotsCommands[NameBots[i]].MinusEnegry(300);
+            if (BotsCommands[NameBots[i]].GetEnergy() <= 0 ){
+                for (int delete_name=0;delete_name<NameBots.GetLength(0);delete_name++){
+                    if (NameBots[delete_name] == MyCube.name){
+                    	//Array.Clear(NameBots,delete_name,0);
+                        //Destroy(MyCube);// и наконец удаляем бота
+                        continue;
+                    }
+
+                }
+                
+                
 
             }
 
